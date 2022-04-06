@@ -1,0 +1,47 @@
+services:
+    app:
+        volumes:
+            - code:/var/www
+    nginx:
+        volumes:
+            - code:/var/www
+            - nginxconfig:/etc/nginx/conf.d
+volumes:
+    code:
+    nginxconfig:
+
+x-mutagen:
+    sync:
+        defaults:
+            mode: "two-way-resolved"
+            ignore:
+                vcs: true
+                paths:
+                    - ".idea"
+                    - ".DS_Store"
+        code:
+            alpha: "./src/"
+            beta: "volume://code"
+            ignore:
+                paths:
+                    - "/node_modules/"
+                    - "/vendor/"
+                    - "/var/cache/"
+                    - "/var/sessions/"
+            permissions:
+                defaultDirectoryMode: 0755
+                defaultFileMode: 0644
+            configurationBeta:
+                permissions:
+                    defaultOwner: "id:501"
+                    defaultGroup: "id:20"
+        nginxconfig:
+            alpha: "./docker/nginx/"
+            beta: "volume://nginxconfig"
+            permissions:
+                defaultDirectoryMode: 0755
+                defaultFileMode: 0644
+            configurationBeta:
+                permissions:
+                    defaultOwner: "id:501"
+                    defaultGroup: "id:20"

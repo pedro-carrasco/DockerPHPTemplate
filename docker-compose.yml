@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./docker/
+      dockerfile: Dockerfile
+    container_name: myapp-app
+    restart: always
+    working_dir: /var/www/
+    volumes:
+      - ./src/:/var/www/
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: myapp-nginx
+    restart: always
+    ports:
+      - 8000:80
+    volumes:
+      - ./src/:/var/www/
+      - ./docker/nginx/:/etc/nginx/conf.d/
+  db:
+    image: postgres:14.2-alpine
+    container_name: myapp-db
+    restart: always
+    environment:
+      - POSTGRES_USER=myapp
+      - POSTGRES_PASSWORD=_secret_
+    ports:
+      - 5432:5432
+    volumes:
+      - myapp-data:/var/lib/postgresql/data
+volumes:
+  myapp-data: {}
